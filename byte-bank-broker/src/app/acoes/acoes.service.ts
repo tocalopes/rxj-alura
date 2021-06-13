@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {map, pluck, tap} from 'rxjs/operators';
 import { Acao } from './modelo/acoes';
@@ -10,8 +10,9 @@ export class AcoesService {
 
   constructor(private http: HttpClient) { }
 
-  getAcoes(){
-    return this.http.get<any>('http://localhost:3000/acoes')
+  getAcoes(valor?: string){
+    const params = valor ? new HttpParams().append('valor',valor) : undefined
+    return this.http.get<any>('http://localhost:3000/acoes',{params})
       .pipe(
         tap((valor) => console.log(valor)),
         pluck('payload'),
