@@ -1,9 +1,9 @@
-import { Observable, Subscription } from 'rxjs';
+import { merge, Observable, Subscription } from 'rxjs';
 import { AcoesService } from './acoes.service';
 import { Acoes } from './modelo/acoes';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {map, pluck, switchMap, tap} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, tap} from 'rxjs/operators';
 
 
 @Component({
@@ -14,13 +14,15 @@ import {map, pluck, switchMap, tap} from 'rxjs/operators';
 export class AcoesComponent {
   // implements OnInit, OnDestroy{
   acoesInput = new FormControl();
-  // acoes: Acoes;
-  acoes$ = this.acoesInput.valueChanges.pipe(
+  todasAcoes$ = this.acoesService.getAcoes().pipe(tap(() => console.log("fluxo inicial")))
+  filtroPeloInput$ = this.acoesInput.valueChanges.pipe(
+    tap(()=> {console.log("fluxo do filtro")}),
     tap(console.log),
-    switchMap((valorDigitado) => this.acoesService.getAcoes(valorDigitado)),
-    tap(console.log)
-    //switchmap muda o fluxo, retornando um novo observable
-    );
+    filter((valorDigitado) => valorDigitado.length >= 3 || !valorDigitado.length),
+    switchMap((valorDigitado) => this.acoesService.getAcoes(valorDigitado))
+  );
+  // acoes: Acoes;
+  acoes$ = merge(this.todasAcoes$,this.filtroPeloInput$);
   // private sub: Subscription;
 
 
