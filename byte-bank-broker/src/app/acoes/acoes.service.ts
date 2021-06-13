@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import {map, pluck, tap} from 'rxjs/operators';
 import { Acao } from './modelo/acoes';
 
+
 @Injectable({
   providedIn: 'root'
 })
